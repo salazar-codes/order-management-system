@@ -40,7 +40,56 @@ services:
     volumes:
       - payment-db-data:/var/lib/postgresql/data
 
+  # Kafka en modo KRaft: desde Kafka 3.5+ esto reemplaza a Zookeeper (que
+  # quedó deprecado y ya no existe desde Kafka 4.0). Un solo contenedor hace
+  # de broker Y de "controller" (coordinación del cluster) a la vez — con un
+  # cluster de un solo nodo no necesitas separarlos.
+  #
+  # Dos listeners porque tenemos dos tipos de clientes distintos:
+  # - PLAINTEXT (kafka:19092): para cuando los servicios corran DENTRO de
+  #   Docker (a partir del Paso 12, con el docker-compose final).
+  # - PLAINTEXT_HOST (localhost:9092): para tus 3 servicios Spring Boot
+  #   corriendo en tu máquina vía IntelliJ, que hoy NO están en Docker.
+  kafka:
+    image: apache/kafka:3.8.0
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://kafka:19092,CONTROLLER://kafka:19093,PLAINTEXT_HOST://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:19092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:19093
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      # Cómodo para desarrollo: el primer send() a un topic nuevo lo crea
+      # solo. En un entorno real, los topics (con su cantidad de particiones
+      # y factor de replicación) se crean explícitamente de antemano.
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+
+  # Interfaz web para inspeccionar topics y mensajes sin usar la CLI de
+  # Kafka. Puerto 8090 (no 8080) para no chocar con el API Gateway del
+  # Paso 11. Entra en http://localhost:8090 una vez que levantes esto.
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    ports:
+      - "8090:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:19092
+    depends_on:
+      - kafka
+
 volumes:
   order-db-data:
   inventory-db-data:
   payment-db-data:
+  kafka-data:
