@@ -2,47 +2,52 @@ package com.portfolio.orderservice.messaging;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.kafka.core.KafkaTemplate;
+import com.portfolio.orderservice.outbox.OutboxEvent;
+import com.portfolio.orderservice.outbox.OutboxEventRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 /**
- * Serializamos a JSON "a mano" con ObjectMapper y enviamos como String, en
- * vez de dejar que Spring Kafka serialice objetos Java directamente. Así
- * evitamos que el deserializador del lado consumidor dependa del nombre de
- * clase Java del productor (que ni siquiera existe en el classpath del otro
- * servicio) — el contrato es el JSON en sí, no un tipo compartido.
+ * ANTES (Paso 3): estos métodos llamaban a kafkaTemplate.send(...) directo.
+ * AHORA (Paso 4): guardan una fila en outbox_events, dentro de la MISMA
+ * transacción JPA que ya está corriendo (la de OrderSagaOrchestrator). Esa
+ * es la esencia del patrón: el Order y su evento saliente viven o mueren
+ * juntos en un solo commit de Postgres. El envío real a Kafka lo hace
+ * OutboxPoller, en otro momento, leyendo esta tabla.
+ *
+ * Fíjate que la API pública de esta clase NO cambió — OrderSagaOrchestrator
+ * no tuvo que tocarse para nada. Ese aislamiento es exactamente lo que buscas
+ * cuando separas "qué evento hay que publicar" (el orquestador) de "cómo se
+ * publica de forma confiable" (esta clase).
  */
 @Component
 public class OrderEventPublisher {
 
-    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final OutboxEventRepository outboxEventRepository;
     private final ObjectMapper objectMapper;
 
-    public OrderEventPublisher(KafkaTemplate<String, String> kafkaTemplate, ObjectMapper objectMapper) {
-        this.kafkaTemplate = kafkaTemplate;
+    public OrderEventPublisher(OutboxEventRepository outboxEventRepository, ObjectMapper objectMapper) {
+        this.outboxEventRepository = outboxEventRepository;
         this.objectMapper = objectMapper;
     }
 
     public void publishStockReservationRequested(StockReservationRequested event) {
-        send(KafkaTopics.STOCK_RESERVATION_REQUESTED, event.orderId(), event);
+        enqueue(KafkaTopics.STOCK_RESERVATION_REQUESTED, event.orderId(), event);
     }
 
     public void publishPaymentChargeRequested(PaymentChargeRequested event) {
-        send(KafkaTopics.PAYMENT_CHARGE_REQUESTED, event.orderId(), event);
+        enqueue(KafkaTopics.PAYMENT_CHARGE_REQUESTED, event.orderId(), event);
     }
 
     public void publishStockReleaseRequested(StockReleaseRequested event) {
-        send(KafkaTopics.STOCK_RELEASE_REQUESTED, event.orderId(), event);
+        enqueue(KafkaTopics.STOCK_RELEASE_REQUESTED, event.orderId(), event);
     }
 
-    private void send(String topic, java.util.UUID orderId, Object payload) {
+    private void enqueue(String topic, UUID orderId, Object payload) {
         try {
-            // El orderId como KEY del mensaje: garantiza que todos los
-            // mensajes de un mismo pedido caigan en la misma partición y se
-            // procesen en orden entre sí (Kafka solo ordena dentro de una
-            // partición, nunca entre particiones distintas).
             String json = objectMapper.writeValueAsString(payload);
-            kafkaTemplate.send(topic, orderId.toString(), json);
+            outboxEventRepository.save(new OutboxEvent(topic, orderId.toString(), json));
         } catch (JsonProcessingException e) {
             throw new IllegalStateException("No se pudo serializar el evento para el topic " + topic, e);
         }
