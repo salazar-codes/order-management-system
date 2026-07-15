@@ -30,11 +30,15 @@ public class Payment {
     protected Payment() {
     }
 
-    public Payment(UUID orderId, BigDecimal amount) {
+    public Payment(UUID orderId, BigDecimal amount, PaymentStatus status) {
         this.orderId = orderId;
         this.amount = amount;
-        this.status = PaymentStatus.COMPLETED;
+        this.status = status;
         this.createdAt = Instant.now();
+    }
+
+    public void markRefunded() {
+        this.status = PaymentStatus.REFUNDED;
     }
 
     public UUID getId() {

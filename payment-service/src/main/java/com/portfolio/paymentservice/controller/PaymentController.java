@@ -36,4 +36,9 @@ public class PaymentController {
     public List<PaymentResponse> listByOrder(@RequestParam UUID orderId) {
         return paymentService.listPaymentsByOrder(orderId);
     }
+
+    @PostMapping("/{orderId}/refund")
+    public PaymentResponse refund(@PathVariable UUID orderId) {
+        return paymentService.refundPayment(orderId);
+    }
 }

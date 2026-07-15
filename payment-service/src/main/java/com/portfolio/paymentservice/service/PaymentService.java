@@ -13,4 +13,6 @@ public interface PaymentService {
     PaymentResponse getPayment(UUID id);
 
     List<PaymentResponse> listPaymentsByOrder(UUID orderId);
+
+    PaymentResponse refundPayment(UUID orderId);
 }

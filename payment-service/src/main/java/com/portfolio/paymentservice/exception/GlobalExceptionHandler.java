@@ -36,4 +36,12 @@ public class GlobalExceptionHandler {
         body.put("message", message);
         return body;
     }
+
+    @ExceptionHandler(PaymentFailedException.class)
+    public ResponseEntity<Map<String, Object>> handlePaymentFailed(PaymentFailedException ex) {
+        // 402 Payment Required: es el status que order-service usa para
+        // distinguir "hay que compensar" (liberar el stock reservado) de
+        // otros errores.
+        return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED).body(errorBody(ex.getMessage()));
+    }
 }

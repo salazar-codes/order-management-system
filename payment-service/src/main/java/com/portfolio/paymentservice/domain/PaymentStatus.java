@@ -1,10 +1,15 @@
 package com.portfolio.paymentservice.domain;
 
 /**
- * Hoy solo usamos COMPLETED al crear un pago (simulamos que siempre se cobra
- * con éxito). FAILED y REFUNDED entran en el Paso 2, cuando el SAGA necesite
- * simular fallos de pago para disparar la compensación de inventario.
+ * COMPLETED: el cobro se procesó con éxito.
+ * FAILED: el cobro fue rechazado (simulado); dispara la compensación en
+ *         order-service (liberar el stock reservado).
+ * REFUNDED: un cobro que sí se completó, pero luego se revirtió — hoy esto
+ *           no lo dispara el SAGA (no reembolsamos tras confirmar), pero
+ *           dejamos el estado listo para cuando el flujo lo necesite.
  */
 public enum PaymentStatus {
-    COMPLETED
+    COMPLETED,
+    FAILED,
+    REFUNDED
 }
