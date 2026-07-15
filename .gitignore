@@ -1,0 +1,44 @@
+# ---- Maven ----
+target/
+!.mvn/wrapper/maven-wrapper.jar
+*.jar
+*.war
+*.class
+
+# ---- IntelliJ IDEA ----
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# ---- VS Code ----
+.vscode/
+
+# ---- Eclipse ----
+.classpath
+.project
+.settings/
+bin/
+
+# ---- Sistema operativo ----
+.DS_Store
+Thumbs.db
+
+# ---- Logs ----
+*.log
+logs/
+
+# ---- Variables de entorno / secretos ----
+.env
+.env.local
+*.pem
+
+# ---- Docker ----
+# Los volúmenes de Postgres viven dentro de Docker, no en el repo — nada que
+# ignorar aquí todavía, pero dejamos la sección para cuando agreguemos
+# Dockerfiles con posibles archivos de build intermedios en el Paso 12.
+
+# ---- Node (por si el frontend vanilla del Paso 13 termina usando alguna
+#      herramienta de build o un servidor de desarrollo simple) ----
+node_modules/

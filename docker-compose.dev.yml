@@ -1,0 +1,46 @@
+# Este archivo NO es el docker-compose final del proyecto (ese llega en el
+# Paso 12, con los 4 servicios + Kafka + Gateway). Es solo un atajo para tener
+# las 3 bases de datos corriendo mientras desarrollas y pruebas cada servicio
+# con `mvn spring-boot:run` desde tu IDE o terminal.
+
+services:
+  order-db:
+    image: postgres:16-alpine
+    container_name: order-db
+    environment:
+      POSTGRES_DB: order_db
+      POSTGRES_USER: order_user
+      POSTGRES_PASSWORD: order_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - order-db-data:/var/lib/postgresql/data
+
+  inventory-db:
+    image: postgres:16-alpine
+    container_name: inventory-db
+    environment:
+      POSTGRES_DB: inventory_db
+      POSTGRES_USER: inventory_user
+      POSTGRES_PASSWORD: inventory_pass
+    ports:
+      - "5433:5432"
+    volumes:
+      - inventory-db-data:/var/lib/postgresql/data
+
+  payment-db:
+    image: postgres:16-alpine
+    container_name: payment-db
+    environment:
+      POSTGRES_DB: payment_db
+      POSTGRES_USER: payment_user
+      POSTGRES_PASSWORD: payment_pass
+    ports:
+      - "5434:5432"
+    volumes:
+      - payment-db-data:/var/lib/postgresql/data
+
+volumes:
+  order-db-data:
+  inventory-db-data:
+  payment-db-data:
