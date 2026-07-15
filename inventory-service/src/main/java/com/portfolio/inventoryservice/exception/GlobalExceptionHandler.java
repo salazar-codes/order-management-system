@@ -30,6 +30,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(body);
     }
 
+    @ExceptionHandler(InsufficientStockException.class)
+    public ResponseEntity<Map<String, Object>> handleInsufficientStock(InsufficientStockException ex) {
+        // 409 Conflict: el request es válido, pero el estado actual del
+        // inventario impide cumplirlo. Este es el status que order-service
+        // va a usar para distinguir "hay que cancelar el pedido" de otros
+        // errores.
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorBody(ex.getMessage()));
+    }
+
     private Map<String, Object> errorBody(String message) {
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", Instant.now().toString());

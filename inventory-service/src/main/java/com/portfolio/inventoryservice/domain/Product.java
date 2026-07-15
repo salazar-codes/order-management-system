@@ -64,4 +64,20 @@ public class Product {
     public int getQuantityReserved() {
         return quantityReserved;
     }
+
+    /** Paso "reservar" del SAGA: mueve cantidad de disponible a reservado. */
+    public void reserve(int quantity) {
+        if (quantity > this.quantityAvailable) {
+            throw new IllegalStateException(
+                    "No se puede reservar más de lo disponible para " + sku);
+        }
+        this.quantityAvailable -= quantity;
+        this.quantityReserved += quantity;
+    }
+
+    /** Compensación del SAGA: devuelve cantidad de reservado a disponible. */
+    public void release(int quantity) {
+        this.quantityReserved -= quantity;
+        this.quantityAvailable += quantity;
+    }
 }
