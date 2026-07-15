@@ -1,11 +1,15 @@
 package com.portfolio.orderservice.domain;
 
 /**
- * Hoy (Paso 1) solo usamos CREATED.
- * Los demás estados (STOCK_RESERVED, PAID, CONFIRMED, CANCELLED, COMPENSATING...)
- * los activaremos cuando construyamos el SAGA en el Paso 2 — no los adelantamos
- * para no modelar un flujo que todavía no existe.
+ * CREATED: el pedido se guardó localmente, el SAGA todavía no arrancó.
+ * STOCK_RESERVED: inventory-service confirmó la reserva; vamos a intentar cobrar.
+ * CONFIRMED: el SAGA completo tuvo éxito (fin feliz).
+ * CANCELLED: algún paso falló y ya se aplicó la compensación correspondiente
+ *            (o no hizo falta compensar nada, si falló el primer paso).
  */
 public enum OrderStatus {
-    CREATED
+    CREATED,
+    STOCK_RESERVED,
+    CONFIRMED,
+    CANCELLED
 }

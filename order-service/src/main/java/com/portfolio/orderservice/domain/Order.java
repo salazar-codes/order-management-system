@@ -82,4 +82,20 @@ public class Order {
     public List<OrderItem> getItems() {
         return items;
     }
+
+    // Las siguientes transiciones las llama el OrderSagaOrchestrator, nunca
+    // el controller ni el CRUD básico — el pedido no decide su propio
+    // destino, el orquestador se lo indica según lo que responden los otros
+    // servicios.
+    public void markStockReserved() {
+        this.status = OrderStatus.STOCK_RESERVED;
+    }
+
+    public void markConfirmed() {
+        this.status = OrderStatus.CONFIRMED;
+    }
+
+    public void markCancelled() {
+        this.status = OrderStatus.CANCELLED;
+    }
 }
