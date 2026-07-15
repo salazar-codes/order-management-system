@@ -1,96 +1,105 @@
 package com.portfolio.orderservice.saga;
 
-import com.portfolio.orderservice.client.InventoryClient;
-import com.portfolio.orderservice.client.PaymentClient;
-import com.portfolio.orderservice.client.ReserveItemRequest;
 import com.portfolio.orderservice.domain.Order;
 import com.portfolio.orderservice.domain.OrderItem;
 import com.portfolio.orderservice.dto.CreateOrderRequest;
 import com.portfolio.orderservice.dto.OrderResponse;
-import com.portfolio.orderservice.exception.PaymentChargeException;
-import com.portfolio.orderservice.exception.StockReservationException;
+import com.portfolio.orderservice.exception.OrderNotFoundException;
+import com.portfolio.orderservice.messaging.OrderEventPublisher;
+import com.portfolio.orderservice.messaging.PaymentChargeReplied;
+import com.portfolio.orderservice.messaging.PaymentChargeRequested;
+import com.portfolio.orderservice.messaging.StockReleaseRequested;
+import com.portfolio.orderservice.messaging.StockReservationReplied;
+import com.portfolio.orderservice.messaging.StockReservationRequested;
 import com.portfolio.orderservice.repository.OrderRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 /**
- * El orquestador del SAGA. A propósito NO tiene @Transactional a nivel de
- * clase o método: cada order.save() de abajo es su propia transacción local
- * corta (Spring Data la abre y cierra sola dentro de save()). Envolver todo
- * el flujo en una sola transacción mantendría una conexión a base de datos
- * abierta mientras esperamos respuestas HTTP de otros servicios — exactamente
- * el antipatrón que el SAGA existe para evitar.
+ * El orquestador del SAGA, ahora asíncrono. Ya NO hay un solo método que
+ * corre los 3 pasos de punta a punta — el flujo se divide en 3 métodos que
+ * se disparan en momentos distintos: uno al crear el pedido, y dos más cada
+ * vez que llega un evento de respuesta por Kafka.
  *
- * Flujo:
- *   1. Guardar Order en CREATED               (transacción local #1)
- *   2. Reservar stock en inventory-service     (llamada HTTP remota)
- *      - falla -> marcar CANCELLED y terminar  (transacción local #2a)
- *      - éxito -> marcar STOCK_RESERVED        (transacción local #2b)
- *   3. Cobrar en payment-service               (llamada HTTP remota)
- *      - falla -> COMPENSAR: liberar stock     (llamada HTTP remota)
- *              -> marcar CANCELLED             (transacción local #3a)
- *      - éxito -> marcar CONFIRMED             (transacción local #3b)
+ * Nota deliberada sobre @Transactional: envuelve el guardado en la base Y
+ * el publish a Kafka en el mismo método, pero eso NO los hace atómicos entre
+ * sí — @Transactional aquí solo gestiona la transacción JPA. Si el save()
+ * tiene éxito pero el publish() falla justo después, el pedido queda
+ * "colgado" sin que nadie se entere. Ese es el "dual write problem" que el
+ * Outbox pattern del Paso 4 va a resolver — lo dejamos sin resolver aquí a
+ * propósito.
  */
 @Service
 public class OrderSagaOrchestrator {
 
     private final OrderRepository orderRepository;
-    private final InventoryClient inventoryClient;
-    private final PaymentClient paymentClient;
+    private final OrderEventPublisher eventPublisher;
 
-    public OrderSagaOrchestrator(OrderRepository orderRepository,
-                                 InventoryClient inventoryClient,
-                                 PaymentClient paymentClient) {
+    public OrderSagaOrchestrator(OrderRepository orderRepository, OrderEventPublisher eventPublisher) {
         this.orderRepository = orderRepository;
-        this.inventoryClient = inventoryClient;
-        this.paymentClient = paymentClient;
+        this.eventPublisher = eventPublisher;
     }
 
-    public OrderResponse createOrderAndRunSaga(CreateOrderRequest request) {
+    @Transactional
+    public OrderResponse createOrderAndStartSaga(CreateOrderRequest request) {
         List<OrderItem> items = request.items().stream()
                 .map(i -> new OrderItem(i.productSku(), i.quantity(), i.unitPrice()))
                 .toList();
 
         Order order = new Order(request.customerId(), items);
-        order = orderRepository.save(order); // transacción local #1
+        order = orderRepository.save(order);
 
-        return runSaga(order);
+        List<StockReservationRequested.ReservationItem> reservationItems = order.getItems().stream()
+                .map(item -> new StockReservationRequested.ReservationItem(item.getProductSku(), item.getQuantity()))
+                .toList();
+        eventPublisher.publishStockReservationRequested(
+                new StockReservationRequested(order.getId(), reservationItems));
+
+        // El pedido se devuelve en CREATED — el cliente NO espera a que el
+        // SAGA termine. Tiene que volver a consultar GET /api/orders/{id}
+        // para ver cómo avanza. Esta es la diferencia central con el Paso 2.
+        return OrderResponse.from(order);
     }
 
-    private OrderResponse runSaga(Order order) {
-        List<ReserveItemRequest> reserveItems = order.getItems().stream()
-                .map(item -> new ReserveItemRequest(item.getProductSku(), item.getQuantity()))
-                .toList();
+    /** Reacciona a la respuesta de inventory-service (topic stock.reservation.replied). */
+    @Transactional
+    public void handleStockReservationReplied(StockReservationReplied event) {
+        Order order = orderRepository.findById(event.orderId())
+                .orElseThrow(() -> new OrderNotFoundException(event.orderId()));
 
-        try {
-            inventoryClient.reserveStock(order.getId(), reserveItems);
-        } catch (StockReservationException ex) {
-            // No hay nada que compensar: inventory-service validó ANTES de
-            // mutar (ver InsufficientStockException), así que si esto falló
-            // no reservó absolutamente nada.
+        if (!event.approved()) {
+            // No hay nada que compensar: inventory-service valida ANTES de
+            // mutar, así que un rechazo aquí significa que no reservó nada.
             order.markCancelled();
             orderRepository.save(order);
-            return OrderResponse.from(order);
+            return;
         }
 
         order.markStockReserved();
         orderRepository.save(order);
 
-        try {
-            paymentClient.charge(order.getId(), order.getTotalAmount());
-        } catch (PaymentChargeException ex) {
+        eventPublisher.publishPaymentChargeRequested(
+                new PaymentChargeRequested(order.getId(), order.getTotalAmount()));
+    }
+
+    /** Reacciona a la respuesta de payment-service (topic payment.charge.replied). */
+    @Transactional
+    public void handlePaymentChargeReplied(PaymentChargeReplied event) {
+        Order order = orderRepository.findById(event.orderId())
+                .orElseThrow(() -> new OrderNotFoundException(event.orderId()));
+
+        if (!event.approved()) {
             // Aquí SÍ hay que compensar: el paso anterior (reservar) tuvo
-            // éxito y quedó comprometido en inventory-service. Deshacerlo es
-            // una acción de negocio explícita, no un rollback automático.
-            inventoryClient.releaseStock(order.getId());
+            // éxito y quedó comprometido en inventory-service.
+            eventPublisher.publishStockReleaseRequested(new StockReleaseRequested(order.getId()));
             order.markCancelled();
             orderRepository.save(order);
-            return OrderResponse.from(order);
+            return;
         }
 
         order.markConfirmed();
         orderRepository.save(order);
-        return OrderResponse.from(order);
     }
 }

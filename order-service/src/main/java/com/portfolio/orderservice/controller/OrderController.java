@@ -26,15 +26,17 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<OrderResponse> create(@Valid @RequestBody CreateOrderRequest request) {
-        // Nota: esta llamada es SÍNCRONA y BLOQUEANTE — el request HTTP del
-        // cliente se mantiene abierto mientras corre por completo el SAGA (reservar +
-        // cobrar, incluyendo la compensación si algo falla). El response ya
-        // trae el status final: CONFIRMED o CANCELLED. En el Paso 3, cuando
-        // Kafka reemplace estas llamadas HTTP por eventos, este endpoint va a
-        // volverse asíncrono (responde 202 Accepted de inmediato, y el estado
-        // se consulta después vía order-query-service).
-        OrderResponse response = sagaOrchestrator.createOrderAndRunSaga(request);
-        return ResponseEntity.created(URI.create("/api/orders/" + response.id())).body(response);
+        // 202 Accepted en vez de 201 Created: el pedido SÍ se creó, pero el
+        // SAGA todavía no terminó (ni siquiera empezó a procesarse cuando
+        // este método retorna). El status en el body va a decir CREATED —
+        // hay que volver a consultar GET /api/orders/{id} para ver si llegó
+        // a CONFIRMED o CANCELLED. Esta espera-sondeando ("polling") es
+        // justo la incomodidad que order-query-service (Paso 5, CQRS) va a
+        // resolver mejor.
+        OrderResponse response = sagaOrchestrator.createOrderAndStartSaga(request);
+        return ResponseEntity.accepted()
+                .location(URI.create("/api/orders/" + response.id()))
+                .body(response);
     }
 
     @GetMapping("/{id}")

@@ -15,17 +15,24 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  # Kafka: order-service es productor en 3 topics (pide reservar, pide
+  # cobrar, pide liberar-compensar) y consumidor en 2 (respuesta de
+  # inventario, respuesta de pago). group-id identifica a este servicio ante
+  # Kafka para el reparto de particiones entre instancias — si algún día
+  # corres 2 réplicas de order-service, comparten este group-id y Kafka
+  # reparte los mensajes entre ellas (ninguna procesa el mismo mensaje dos
+  # veces).
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: order-service
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
 
 logging:
   level:
     com.portfolio.orderservice: DEBUG
-
-# URLs de los servicios que order-service llama de forma síncrona durante el
-# SAGA. En el Paso 3 estas llamadas HTTP se reemplazan por eventos de Kafka
-# (comunicación asíncrona) — por ahora es lo más simple para aprender el
-# patrón de orquestación sin dos cosas nuevas a la vez.
-services:
-  inventory:
-    base-url: http://localhost:8082
-  payment:
-    base-url: http://localhost:8083
