@@ -6,6 +6,7 @@ import com.portfolio.orderservice.dto.CreateOrderRequest;
 import com.portfolio.orderservice.dto.OrderResponse;
 import com.portfolio.orderservice.exception.OrderNotFoundException;
 import com.portfolio.orderservice.messaging.OrderEventPublisher;
+import com.portfolio.orderservice.messaging.OrderStatusChanged;
 import com.portfolio.orderservice.messaging.PaymentChargeReplied;
 import com.portfolio.orderservice.messaging.PaymentChargeRequested;
 import com.portfolio.orderservice.messaging.StockReleaseRequested;
@@ -15,6 +16,7 @@ import com.portfolio.orderservice.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 
 /**
@@ -24,12 +26,13 @@ import java.util.List;
  * vez que llega un evento de respuesta por Kafka.
  *
  * Nota deliberada sobre @Transactional: envuelve el guardado en la base Y
- * el publish a Kafka en el mismo método, pero eso NO los hace atómicos entre
- * sí — @Transactional aquí solo gestiona la transacción JPA. Si el save()
- * tiene éxito pero el publish() falla justo después, el pedido queda
- * "colgado" sin que nadie se entere. Ese es el "dual write problem" que el
- * Outbox pattern del Paso 4 va a resolver — lo dejamos sin resolver aquí a
- * propósito.
+ * el encolado al outbox en el mismo método, y eso SÍ los hace atómicos entre
+ * sí desde el Paso 4 (ambos INSERT/UPDATE viven en la misma transacción
+ * Postgres). El envío real a Kafka lo hace OutboxPoller por separado.
+ *
+ * NUEVO en este paso: cada vez que el estado del pedido cambia, además de
+ * los eventos de coordinación del SAGA, publicamos un OrderStatusChanged —
+ * el evento "para el mundo exterior" que order-query-service va a consumir.
  */
 @Service
 public class OrderSagaOrchestrator {
@@ -50,6 +53,7 @@ public class OrderSagaOrchestrator {
 
         Order order = new Order(request.customerId(), items);
         order = orderRepository.save(order);
+        publishStatusChanged(order); // CREATED
 
         List<StockReservationRequested.ReservationItem> reservationItems = order.getItems().stream()
                 .map(item -> new StockReservationRequested.ReservationItem(item.getProductSku(), item.getQuantity()))
@@ -58,8 +62,8 @@ public class OrderSagaOrchestrator {
                 new StockReservationRequested(order.getId(), reservationItems));
 
         // El pedido se devuelve en CREATED — el cliente NO espera a que el
-        // SAGA termine. Tiene que volver a consultar GET /api/orders/{id}
-        // para ver cómo avanza. Esta es la diferencia central con el Paso 2.
+        // SAGA termine. Tiene que volver a consultar (o, desde el Paso 5,
+        // preguntarle a order-query-service) para ver cómo avanza.
         return OrderResponse.from(order);
     }
 
@@ -74,11 +78,13 @@ public class OrderSagaOrchestrator {
             // mutar, así que un rechazo aquí significa que no reservó nada.
             order.markCancelled();
             orderRepository.save(order);
+            publishStatusChanged(order); // CANCELLED
             return;
         }
 
         order.markStockReserved();
         orderRepository.save(order);
+        publishStatusChanged(order); // STOCK_RESERVED
 
         eventPublisher.publishPaymentChargeRequested(
                 new PaymentChargeRequested(order.getId(), order.getTotalAmount()));
@@ -96,10 +102,28 @@ public class OrderSagaOrchestrator {
             eventPublisher.publishStockReleaseRequested(new StockReleaseRequested(order.getId()));
             order.markCancelled();
             orderRepository.save(order);
+            publishStatusChanged(order); // CANCELLED
             return;
         }
 
         order.markConfirmed();
         orderRepository.save(order);
+        publishStatusChanged(order); // CONFIRMED
+    }
+
+    /**
+     * Un solo punto centralizado para armar y encolar el evento "externo".
+     * Así cualquier transición futura que agreguemos al SAGA (por ejemplo,
+     * en el Paso 6 con el circuit breaker) solo necesita llamar a este
+     * método, sin duplicar la construcción del evento en cada lugar.
+     */
+    private void publishStatusChanged(Order order) {
+        eventPublisher.publishOrderStatusChanged(new OrderStatusChanged(
+                order.getId(),
+                order.getCustomerId(),
+                order.getStatus().name(),
+                order.getTotalAmount(),
+                Instant.now()
+        ));
     }
 }

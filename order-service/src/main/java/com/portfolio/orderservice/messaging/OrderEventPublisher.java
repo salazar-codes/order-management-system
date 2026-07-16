@@ -44,6 +44,10 @@ public class OrderEventPublisher {
         enqueue(KafkaTopics.STOCK_RELEASE_REQUESTED, event.orderId(), event);
     }
 
+    public void publishOrderStatusChanged(OrderStatusChanged event) {
+        enqueue(KafkaTopics.ORDER_STATUS_CHANGED, event.orderId(), event);
+    }
+
     private void enqueue(String topic, UUID orderId, Object payload) {
         try {
             String json = objectMapper.writeValueAsString(payload);
