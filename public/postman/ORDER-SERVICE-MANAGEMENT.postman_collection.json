@@ -1,0 +1,1315 @@
+{
+  "info": {
+    "_postman_id": "92ff7d1c-e365-461f-a98e-7a8288815299",
+    "name": "ORDER-SERVICE-MANAGEMENT",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "1721242"
+  },
+  "item": [
+    {
+      "name": "sync",
+      "item": [
+        {
+          "name": "Products",
+          "item": [
+            {
+              "name": "Producto",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"sku\": \"SKU-1\",\n    \"name\": \"Teclado mecanico\",\n    \"initialStock\": 50\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8082/api/products",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8082",
+                  "path": [
+                    "api",
+                    "products"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "Producto",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"sku\":\"P00001\",\n    \"name\":\"Iphone 17\",\n    \"initialStock\":10\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "http://localhost:8082/api/products",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8082",
+                      "path": [
+                        "api",
+                        "products"
+                      ]
+                    }
+                  },
+                  "status": "Created",
+                  "code": 201,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "Location",
+                      "value": "/api/products/15f12d92-5098-4224-90cb-4e00e1faf26f"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Wed, 15 Jul 2026 00:51:05 GMT"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=60"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"id\": \"15f12d92-5098-4224-90cb-4e00e1faf26f\",\n    \"sku\": \"P00001\",\n    \"name\": \"Iphone 17\",\n    \"quantityAvailable\": 10,\n    \"quantityReserved\": 0\n}"
+                },
+                {
+                  "name": "Producto",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"sku\": \"SKU-1\",\n    \"name\": \"Teclado mecanico\",\n    \"initialStock\": 50\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "http://localhost:8082/api/products",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8082",
+                      "path": [
+                        "api",
+                        "products"
+                      ]
+                    }
+                  },
+                  "status": "Created",
+                  "code": 201,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "Location",
+                      "value": "/api/products/4cbe50e8-f1a0-4a5a-aaec-9559a900028b"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Wed, 15 Jul 2026 03:23:00 GMT"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=60"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"id\": \"4cbe50e8-f1a0-4a5a-aaec-9559a900028b\",\n    \"sku\": \"SKU-1\",\n    \"name\": \"Teclado mecanico\",\n    \"quantityAvailable\": 50,\n    \"quantityReserved\": 0\n}"
+                }
+              ]
+            },
+            {
+              "name": "Producto by ID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8082/api/products/15f12d92-5098-4224-90cb-4e00e1faf26f",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8082",
+                  "path": [
+                    "api",
+                    "products",
+                    "15f12d92-5098-4224-90cb-4e00e1faf26f"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "New Request",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "http://localhost:8082/api/products/15f12d92-5098-4224-90cb-4e00e1faf26f",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8082",
+                      "path": [
+                        "api",
+                        "products",
+                        "15f12d92-5098-4224-90cb-4e00e1faf26f"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Wed, 15 Jul 2026 00:55:43 GMT"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=60"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"id\": \"15f12d92-5098-4224-90cb-4e00e1faf26f\",\n    \"sku\": \"P00001\",\n    \"name\": \"Iphone 17\",\n    \"quantityAvailable\": 10,\n    \"quantityReserved\": 0\n}"
+                }
+              ]
+            },
+            {
+              "name": "Products",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8082/api/products",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8082",
+                  "path": [
+                    "api",
+                    "products"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "Products",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "http://localhost:8082/api/products",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8082",
+                      "path": [
+                        "api",
+                        "products"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Wed, 15 Jul 2026 03:41:58 GMT"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=60"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "[\n    {\n        \"id\": \"468585dd-a895-408f-b49a-88eb86e0865f\",\n        \"sku\": \"SKU-1\",\n        \"name\": \"Teclado mecanico\",\n        \"quantityAvailable\": 50,\n        \"quantityReserved\": 0\n    }\n]"
+                },
+                {
+                  "name": "stock after reserva",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "http://localhost:8082/api/products",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8082",
+                      "path": [
+                        "api",
+                        "products"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Wed, 15 Jul 2026 03:50:33 GMT"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=60"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "[\n    {\n        \"id\": \"468585dd-a895-408f-b49a-88eb86e0865f\",\n        \"sku\": \"SKU-1\",\n        \"name\": \"Teclado mecanico\",\n        \"quantityAvailable\": 48,\n        \"quantityReserved\": 2\n    }\n]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Orders",
+          "item": [
+            {
+              "name": "order status by id",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8081/api/orders/28607924-a43d-4660-be3a-9777cfa63a1c",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "orders",
+                    "28607924-a43d-4660-be3a-9777cfa63a1c"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "order status by id",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "http://localhost:8081/api/orders/28607924-a43d-4660-be3a-9777cfa63a1c",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8081",
+                      "path": [
+                        "api",
+                        "orders",
+                        "28607924-a43d-4660-be3a-9777cfa63a1c"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Wed, 15 Jul 2026 03:48:46 GMT"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=60"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"id\": \"28607924-a43d-4660-be3a-9777cfa63a1c\",\n    \"customerId\": \"cust-1\",\n    \"status\": \"CONFIRMED\",\n    \"totalAmount\": 39.8,\n    \"createdAt\": \"2026-07-15T03:42:15.686036Z\",\n    \"items\": [\n        {\n            \"productSku\": \"SKU-1\",\n            \"quantity\": 2,\n            \"unitPrice\": 19.9\n        }\n    ]\n}"
+                }
+              ]
+            },
+            {
+              "name": "order",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"customerId\": \"cust-3\",\n    \"items\": [\n        {\n            \"productSku\": \"SKU-1\",\n            \"quantity\": 9999,\n            \"unitPrice\": 10.00\n        }\n    ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8081/api/orders",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "orders"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "order confirmed",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"customerId\": \"cust-1\",\n    \"items\": [\n        {\n            \"productSku\": \"SKU-1\",\n            \"quantity\": 2,\n            \"unitPrice\": 19.90\n        }\n    ]\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "http://localhost:8081/api/orders",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8081",
+                      "path": [
+                        "api",
+                        "orders"
+                      ]
+                    }
+                  },
+                  "status": "Created",
+                  "code": 201,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "Location",
+                      "value": "/api/orders/28607924-a43d-4660-be3a-9777cfa63a1c"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Wed, 15 Jul 2026 03:42:15 GMT"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=60"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"id\": \"28607924-a43d-4660-be3a-9777cfa63a1c\",\n    \"customerId\": \"cust-1\",\n    \"status\": \"CONFIRMED\",\n    \"totalAmount\": 39.8,\n    \"createdAt\": \"2026-07-15T03:42:15.686036Z\",\n    \"items\": [\n        {\n            \"productSku\": \"SKU-1\",\n            \"quantity\": 2,\n            \"unitPrice\": 19.9\n        }\n    ]\n}"
+                },
+                {
+                  "name": "order cancelled",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"customerId\": \"cust-2\",\n    \"items\": [\n        {\n            \"productSku\": \"SKU-1\",\n            \"quantity\": 10,\n            \"unitPrice\": 150.00\n        }\n    ]\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "http://localhost:8081/api/orders",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8081",
+                      "path": [
+                        "api",
+                        "orders"
+                      ]
+                    }
+                  },
+                  "status": "Created",
+                  "code": 201,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "Location",
+                      "value": "/api/orders/1c5da47d-1560-4ff3-b9ba-62649f5fdfc4"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Wed, 15 Jul 2026 03:51:20 GMT"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=60"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"id\": \"1c5da47d-1560-4ff3-b9ba-62649f5fdfc4\",\n    \"customerId\": \"cust-2\",\n    \"status\": \"CANCELLED\",\n    \"totalAmount\": 1500,\n    \"createdAt\": \"2026-07-15T03:51:20.045848Z\",\n    \"items\": [\n        {\n            \"productSku\": \"SKU-1\",\n            \"quantity\": 10,\n            \"unitPrice\": 150\n        }\n    ]\n}"
+                },
+                {
+                  "name": "order stock insuficiente",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"customerId\": \"cust-3\",\n    \"items\": [\n        {\n            \"productSku\": \"SKU-1\",\n            \"quantity\": 9999,\n            \"unitPrice\": 10.00\n        }\n    ]\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "http://localhost:8081/api/orders",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8081",
+                      "path": [
+                        "api",
+                        "orders"
+                      ]
+                    }
+                  },
+                  "status": "Created",
+                  "code": 201,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "Location",
+                      "value": "/api/orders/bfc264b6-8403-424d-b89d-5cc79dab0c18"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Wed, 15 Jul 2026 03:55:05 GMT"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=60"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"id\": \"bfc264b6-8403-424d-b89d-5cc79dab0c18\",\n    \"customerId\": \"cust-3\",\n    \"status\": \"CANCELLED\",\n    \"totalAmount\": 99990,\n    \"createdAt\": \"2026-07-15T03:55:05.761904Z\",\n    \"items\": [\n        {\n            \"productSku\": \"SKU-1\",\n            \"quantity\": 9999,\n            \"unitPrice\": 10\n        }\n    ]\n}"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Payments",
+          "item": [
+            {
+              "name": "Payment",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"orderId\": \"22222222-2222-2222-2222-222222222222\",\n    \"amount\": 2000.00\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8083/api/payments",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8083",
+                  "path": [
+                    "api",
+                    "payments"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "Payment success",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"orderId\": \"11111111-1111-1111-1111-111111111111\",\n    \"amount\": 50.00\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "http://localhost:8083/api/payments",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8083",
+                      "path": [
+                        "api",
+                        "payments"
+                      ]
+                    }
+                  },
+                  "status": "Created",
+                  "code": 201,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "Location",
+                      "value": "/api/payments/8f5cfd44-26bf-478f-8436-09e130268453"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Wed, 15 Jul 2026 03:57:44 GMT"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=60"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"id\": \"8f5cfd44-26bf-478f-8436-09e130268453\",\n    \"orderId\": \"11111111-1111-1111-1111-111111111111\",\n    \"amount\": 50,\n    \"status\": \"COMPLETED\",\n    \"createdAt\": \"2026-07-15T03:57:44.790239Z\"\n}"
+                },
+                {
+                  "name": "Payment failed",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"orderId\": \"22222222-2222-2222-2222-222222222222\",\n    \"amount\": 2000.00\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "http://localhost:8083/api/payments",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8083",
+                      "path": [
+                        "api",
+                        "payments"
+                      ]
+                    }
+                  },
+                  "status": "Payment Required",
+                  "code": 402,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Wed, 15 Jul 2026 03:58:16 GMT"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=60"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"message\": \"Pago rechazado: el monto 2000.00 excede el límite simulado de 1000\",\n    \"timestamp\": \"2026-07-15T03:58:16.189453Z\"\n}"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "async",
+      "item": [
+        {
+          "name": "Products",
+          "item": [
+            {
+              "name": "create",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"sku\": \"SKU-1\",\n    \"name\": \"Teclado mecanico\",\n    \"initialStock\": 50\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8082/api/products",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8082",
+                  "path": [
+                    "api",
+                    "products"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "consultar",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8082/api/products",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8082",
+                  "path": [
+                    "api",
+                    "products"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Orders",
+          "item": [
+            {
+              "name": "crear pedido",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"customerId\": \"cust-1\",\n    \"items\": [\n        {\n            \"productSku\": \"SKU-1\",\n            \"quantity\": 2,\n            \"unitPrice\": 19.90\n        }\n    ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8081/api/orders",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "orders"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "crear pedido",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"customerId\": \"cust-1\",\n    \"items\": [\n        {\n            \"productSku\": \"SKU-1\",\n            \"quantity\": 2,\n            \"unitPrice\": 19.90\n        }\n    ]\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "http://localhost:8081/api/orders",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8081",
+                      "path": [
+                        "api",
+                        "orders"
+                      ]
+                    }
+                  },
+                  "status": "Accepted",
+                  "code": 202,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "Location",
+                      "value": "/api/orders/94c2c186-156e-43f5-b292-43d9b8a88af6"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Wed, 15 Jul 2026 19:26:15 GMT"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=60"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"id\": \"94c2c186-156e-43f5-b292-43d9b8a88af6\",\n    \"customerId\": \"cust-1\",\n    \"status\": \"CREATED\",\n    \"totalAmount\": 39.8,\n    \"createdAt\": \"2026-07-15T19:26:15.717067Z\",\n    \"items\": [\n        {\n            \"productSku\": \"SKU-1\",\n            \"quantity\": 2,\n            \"unitPrice\": 19.9\n        }\n    ]\n}"
+                },
+                {
+                  "name": "creado pero con falta stock",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"customerId\": \"cust-2\",\n    \"items\": [\n        {\n            \"productSku\": \"SKU-1\",\n            \"quantity\": 9999,\n            \"unitPrice\": 10.00\n        }\n    ]\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "http://localhost:8081/api/orders",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8081",
+                      "path": [
+                        "api",
+                        "orders"
+                      ]
+                    }
+                  },
+                  "status": "Accepted",
+                  "code": 202,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "Location",
+                      "value": "/api/orders/54f90e69-f3fd-4af3-9514-5be4cf87df4b"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Wed, 15 Jul 2026 19:43:33 GMT"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=60"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"id\": \"54f90e69-f3fd-4af3-9514-5be4cf87df4b\",\n    \"customerId\": \"cust-2\",\n    \"status\": \"CREATED\",\n    \"totalAmount\": 99990,\n    \"createdAt\": \"2026-07-15T19:43:33.164973Z\",\n    \"items\": [\n        {\n            \"productSku\": \"SKU-1\",\n            \"quantity\": 9999,\n            \"unitPrice\": 10\n        }\n    ]\n}"
+                },
+                {
+                  "name": "crear pero con falta de pago",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"customerId\": \"cust-3\",\n    \"items\": [\n        {\n            \"productSku\": \"SKU-1\",\n            \"quantity\": 10,\n            \"unitPrice\": 150.00\n        }\n    ]\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "http://localhost:8081/api/orders",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8081",
+                      "path": [
+                        "api",
+                        "orders"
+                      ]
+                    }
+                  },
+                  "status": "Accepted",
+                  "code": 202,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "Location",
+                      "value": "/api/orders/d9793263-a623-4a4d-b6d2-4543d396c43c"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Wed, 15 Jul 2026 19:53:06 GMT"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=60"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"id\": \"d9793263-a623-4a4d-b6d2-4543d396c43c\",\n    \"customerId\": \"cust-3\",\n    \"status\": \"CREATED\",\n    \"totalAmount\": 1500,\n    \"createdAt\": \"2026-07-15T19:53:06.758535Z\",\n    \"items\": [\n        {\n            \"productSku\": \"SKU-1\",\n            \"quantity\": 10,\n            \"unitPrice\": 150\n        }\n    ]\n}"
+                }
+              ]
+            },
+            {
+              "name": "consultar por id",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8081/api/orders/58881a67-c971-47e8-8897-10d9fc6851e7",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "api",
+                    "orders",
+                    "58881a67-c971-47e8-8897-10d9fc6851e7"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "succesfull",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "http://localhost:8081/api/orders/94c2c186-156e-43f5-b292-43d9b8a88af6",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8081",
+                      "path": [
+                        "api",
+                        "orders",
+                        "94c2c186-156e-43f5-b292-43d9b8a88af6"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Wed, 15 Jul 2026 19:27:19 GMT"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=60"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"id\": \"94c2c186-156e-43f5-b292-43d9b8a88af6\",\n    \"customerId\": \"cust-1\",\n    \"status\": \"CONFIRMED\",\n    \"totalAmount\": 39.8,\n    \"createdAt\": \"2026-07-15T19:26:15.717067Z\",\n    \"items\": [\n        {\n            \"productSku\": \"SKU-1\",\n            \"quantity\": 2,\n            \"unitPrice\": 19.9\n        }\n    ]\n}"
+                },
+                {
+                  "name": "cancelado-falta-stock",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "http://localhost:8081/api/orders/54f90e69-f3fd-4af3-9514-5be4cf87df4b",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8081",
+                      "path": [
+                        "api",
+                        "orders",
+                        "54f90e69-f3fd-4af3-9514-5be4cf87df4b"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Wed, 15 Jul 2026 19:44:09 GMT"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=60"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"id\": \"54f90e69-f3fd-4af3-9514-5be4cf87df4b\",\n    \"customerId\": \"cust-2\",\n    \"status\": \"CANCELLED\",\n    \"totalAmount\": 99990,\n    \"createdAt\": \"2026-07-15T19:43:33.164973Z\",\n    \"items\": [\n        {\n            \"productSku\": \"SKU-1\",\n            \"quantity\": 9999,\n            \"unitPrice\": 10\n        }\n    ]\n}"
+                },
+                {
+                  "name": "cancelado-falta-pago",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "http://localhost:8081/api/orders/d9793263-a623-4a4d-b6d2-4543d396c43c",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8081",
+                      "path": [
+                        "api",
+                        "orders",
+                        "d9793263-a623-4a4d-b6d2-4543d396c43c"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Wed, 15 Jul 2026 19:54:03 GMT"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=60"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"id\": \"d9793263-a623-4a4d-b6d2-4543d396c43c\",\n    \"customerId\": \"cust-3\",\n    \"status\": \"CANCELLED\",\n    \"totalAmount\": 1500,\n    \"createdAt\": \"2026-07-15T19:53:06.758535Z\",\n    \"items\": [\n        {\n            \"productSku\": \"SKU-1\",\n            \"quantity\": 10,\n            \"unitPrice\": 150\n        }\n    ]\n}"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
