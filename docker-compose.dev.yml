@@ -88,8 +88,25 @@ services:
     depends_on:
       - kafka
 
+    # Base del MODELO DE LECTURA (order-query-service, Paso 5). Es una base
+    # aparte, no una réplica de order_db — solo tiene la tabla "aplanada"
+    # order_view, sin relaciones ni lógica transaccional. Se llena
+    # exclusivamente consumiendo eventos de Kafka, nunca por escritura directa.
+  query-db:
+    image: postgres:16-alpine
+    container_name: query-db
+    environment:
+      POSTGRES_DB: query_db
+      POSTGRES_USER: query_user
+      POSTGRES_PASSWORD: query_pass
+    ports:
+      - "5435:5432"
+    volumes:
+      - query-db-data:/var/lib/postgresql/data
+
 volumes:
   order-db-data:
   inventory-db-data:
   payment-db-data:
   kafka-data:
+  query-db-data:

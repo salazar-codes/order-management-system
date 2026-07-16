@@ -1,0 +1,28 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: order-query-service
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5435/query_db
+    username: query_user
+    password: query_pass
+  # A diferencia de JPA (ddl-auto: update), R2DBC no gestiona el esquema por
+  # ti. Este es el primer momento del proyecto donde necesitamos un script
+  # SQL explícito para crear la tabla — un adelanto de lo que Flyway hará
+  # de forma versionada para TODOS los servicios en el Paso 8.
+  sql:
+    init:
+      mode: always
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: order-query-service
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+logging:
+  level:
+    com.portfolio.orderqueryservice: DEBUG
