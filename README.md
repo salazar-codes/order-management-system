@@ -1,68 +1,107 @@
-# Order Management System — Portafolio Java/Spring
+# Order Management System — Versión síncrona (referencia histórica)
 
-Sistema de gestión de pedidos con microservicios, construido incrementalmente
-como pieza de portafolio. Este README se irá actualizando en cada fase.
+> Esta rama documenta el estado del proyecto **antes** de introducir Kafka.
+> Se conserva como referencia para comparar el enfoque de orquestación
+> síncrona (HTTP directo entre servicios) contra la versión asíncrona
+> basada en eventos, disponible en `main`.
 
-## Estado actual: Paso 1 de 13
+## Arquitectura
 
-✅ `order-service`, `inventory-service` y `payment-service` como CRUDs
-independientes, cada uno con su propia base de datos PostgreSQL.
-Sin distribución todavía: sin Kafka, sin SAGA, sin Gateway.
+```mermaid
+flowchart TB
+    FE[Frontend]
+    FE --> OS
 
-Próximos pasos: SAGA por orquestación (Paso 2) → Kafka (Paso 3) → Outbox
-(Paso 4) → CQRS con `order-query-service` en WebFlux (Paso 5) → Resilience4j
-(Paso 6) → reglas de validación funcionales (Paso 7) → tests con
-Testcontainers (Paso 8) → OpenAPI (Paso 9) → Postman/Newman (Paso 10) →
-API Gateway (Paso 11) → docker-compose completo (Paso 12) → frontend (Paso 13).
+    subgraph Servicios["Spring MVC"]
+        OS[order-service<br/>orquestador del SAGA]
+        IS[inventory-service]
+        PS[payment-service]
+    end
 
-## Cómo correr esto hoy
+    ODB[(order_db)]
+    IDB[(inventory_db)]
+    PDB[(payment_db)]
 
-1. Levanta las 3 bases de datos:
-   ```
-   docker-compose -f docker-compose.dev.yml up -d
-   ```
-2. En 3 terminales distintas, levanta cada servicio (necesitas Java 21 y Maven):
-   ```
-   cd order-service     && ./mvnw spring-boot:run   # puerto 8081
-   cd inventory-service  && ./mvnw spring-boot:run   # puerto 8082
-   cd payment-service    && ./mvnw spring-boot:run   # puerto 8083
-   ```
-3. Prueba cada uno, por ejemplo:
-   ```
-   curl -X POST http://localhost:8081/api/orders \
-     -H "Content-Type: application/json" \
-     -d '{"customerId":"cust-1","items":[{"productSku":"SKU-1","quantity":2,"unitPrice":19.90}]}'
+    OS --- ODB
+    IS --- IDB
+    PS --- PDB
 
-   curl -X POST http://localhost:8082/api/products \
-     -H "Content-Type: application/json" \
-     -d '{"sku":"SKU-1","name":"Teclado mecánico","initialStock":50}'
+    OS -->|HTTP síncrono: reservar / liberar| IS
+    OS -->|HTTP síncrono: cobrar| PS
+```
 
-   curl -X POST http://localhost:8083/api/payments \
-     -H "Content-Type: application/json" \
-     -d '{"orderId":"<uuid-de-un-pedido>","amount":39.80}'
-   ```
+`order-service` orquesta el flujo del pedido llamando directamente por HTTP
+(`RestClient`) a `inventory-service` y `payment-service`, en una única
+transacción de request bloqueante: reservar stock → cobrar → confirmar, con
+compensación explícita (liberar stock) si el cobro falla.
 
-Nota: el wrapper `mvnw` no viene incluido en este esqueleto — genera cada
-wrapper localmente con `mvn -N wrapper:wrapper` dentro de cada carpeta de
-servicio, o usa tu `mvn` global.
+## Stack
 
-## Por qué cada servicio tiene su propia base de datos
+| Categoría | Tecnología |
+|---|---|
+| Lenguaje / runtime | Java 21 |
+| Framework | Spring Boot 3.3 (Spring MVC) |
+| Persistencia | Spring Data JPA + PostgreSQL (database-per-service) |
+| Comunicación entre servicios | HTTP síncrono (`RestClient`) |
+| Infraestructura local | Docker Compose (solo PostgreSQL) |
 
-Es el principio de "database per service": ningún servicio puede leer ni
-escribir directamente en la tabla de otro. Es lo que hace *necesarios* los
-patrones que vienen después (SAGA, eventos, CQRS) — no son complejidad
-gratuita, son la consecuencia de no compartir base de datos.
+## Patrones implementados en esta versión
 
-## Resumen de lo aprendido en el Paso 1
+- **Database per service** — cada servicio con su propio esquema PostgreSQL, sin acceso cruzado.
+- **SAGA por orquestación (síncrona)** — `order-service` coordina reservar → cobrar → confirmar, ejecutando la compensación (liberar stock) si el cobro es rechazado.
+- **Manejo centralizado de errores** — `GlobalExceptionHandler` por servicio, traduciendo excepciones de dominio a códigos HTTP (409 stock insuficiente, 402 pago rechazado).
 
-- **Entidades JPA vs. DTOs record**: las entidades necesitan mutabilidad y
-  constructor vacío para que Hibernate las gestione; los DTOs, al cruzar la
-  frontera HTTP, sí pueden (y deben) ser inmutables → records.
-- **Controller sin lógica de negocio**: el controller solo válida el shape
-  del request (`@Valid`) y traduce a/desde DTOs. Toda decisión vive en el
-  `service`.
-- **Constructor injection**: hace que cada `*ServiceImpl` sea instanciable en
-  un test unitario sin levantar Spring — clave cuando lleguemos al
-  Paso 8 con JUnit + Mockito.
-- **GlobalExceptionHandler por servicio**: evita repetir manejo de errores
-  en cada controller y centraliza el formato de respuesta de error.
+## Limitación conocida de este enfoque
+
+El endpoint `POST /api/orders` mantiene la conexión HTTP abierta durante
+todo el SAGA — el cliente espera el resultado final (`CONFIRMED` o
+`CANCELLED`) en la misma respuesta. Si algún servicio remoto está lento o
+caído, la latencia y el riesgo de fallo en cascada crecen con cada paso
+síncrono adicional. Esta limitación es la motivación directa del rediseño
+a mensajería asíncrona con Kafka, disponible en `main`.
+
+## Endpoints principales
+
+**order-service** (`:8081`)
+- `POST /api/orders` — crea el pedido y ejecuta el SAGA completo antes de responder.
+- `GET /api/orders/{id}`
+- `GET /api/orders`
+
+**inventory-service** (`:8082`)
+- `POST /api/products`, `GET /api/products`, `GET /api/products/{id}`
+- `POST /api/inventory/reserve`
+- `POST /api/inventory/release/{orderId}`
+
+**payment-service** (`:8083`)
+- `POST /api/payments` — simula rechazo si el monto supera 1000.
+- `POST /api/payments/{orderId}/refund`
+- `GET /api/payments/{id}`, `GET /api/payments?orderId=...`
+
+## Cómo correr esta versión localmente
+
+**Requisitos:** Java 21, Maven, Docker Desktop.
+
+```bash
+docker-compose -f docker-compose.dev.yml up -d   # solo levanta las 3 bases PostgreSQL
+```
+
+Luego corre cada servicio desde IntelliJ o con `mvn spring-boot:run`:
+
+| Servicio | Puerto |
+|---|---|
+| `order-service` | 8081 |
+| `inventory-service` | 8082 |
+| `payment-service` | 8083 |
+
+```bash
+curl -X POST http://localhost:8082/api/products \
+  -H "Content-Type: application/json" \
+  -d '{"sku":"SKU-1","name":"Teclado mecanico","initialStock":50}'
+
+curl -X POST http://localhost:8081/api/orders \
+  -H "Content-Type: application/json" \
+  -d '{"customerId":"cust-1","items":[{"productSku":"SKU-1","quantity":2,"unitPrice":19.90}]}'
+```
+
+La respuesta ya trae el `status` final (`CONFIRMED` o `CANCELLED`) — a
+diferencia de la versión en `main`, aquí no hace falta volver a consultar.
