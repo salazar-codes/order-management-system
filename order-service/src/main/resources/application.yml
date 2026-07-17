@@ -36,3 +36,39 @@ spring:
 logging:
   level:
     com.portfolio.orderservice: DEBUG
+
+# URL para la ÚNICA llamada HTTP síncrona que queda en el sistema: el
+# pre-chequeo de disponibilidad del Paso 6.
+services:
+  inventory:
+    base-url: http://localhost:8082
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      inventoryAvailability:
+        sliding-window-size: 10          # cuántas llamadas recientes mira para calcular la tasa de fallos
+        minimum-number-of-calls: 5        # no evalúa nada hasta tener al menos estas llamadas
+        failure-rate-threshold: 50        # % de fallos que abre el circuito
+        wait-duration-in-open-state: 10s  # cuánto tiempo se queda abierto antes de probar de nuevo
+        permitted-number-of-calls-in-half-open-state: 3
+        automatic-transition-from-open-to-half-open-enabled: true
+  retry:
+    instances:
+      inventoryAvailability:
+        max-attempts: 3
+        wait-duration: 200ms
+
+# Actuator expone /actuator/health con el estado del circuit breaker
+# (CLOSED/OPEN/HALF_OPEN) — útil para ver el patrón en acción sin adivinar.
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,circuitbreakers,circuitbreakerevents
+  endpoint:
+    health:
+      show-details: always
+  health:
+    circuitbreakers:
+      enabled: true

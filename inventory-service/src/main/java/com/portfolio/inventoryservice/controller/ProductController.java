@@ -1,5 +1,6 @@
 package com.portfolio.inventoryservice.controller;
 
+import com.portfolio.inventoryservice.dto.AvailabilityResponse;
 import com.portfolio.inventoryservice.dto.CreateProductRequest;
 import com.portfolio.inventoryservice.dto.ProductResponse;
 import com.portfolio.inventoryservice.service.ProductService;
@@ -35,5 +36,16 @@ public class ProductController {
     @GetMapping
     public List<ProductResponse> list() {
         return productService.listProducts();
+    }
+
+    /**
+     * Pre-chequeo síncrono para order-service (Paso 6). A propósito NO
+     * reserva nada — es una lectura simple, sin @Transactional de escritura,
+     * sin efectos secundarios. Por eso es seguro que order-service la llame
+     * repetidamente incluso con reintentos del circuit breaker.
+     */
+    @GetMapping("/availability")
+    public AvailabilityResponse checkAvailability(@RequestParam String sku, @RequestParam int quantity) {
+        return new AvailabilityResponse(productService.checkAvailability(sku, quantity));
     }
 }

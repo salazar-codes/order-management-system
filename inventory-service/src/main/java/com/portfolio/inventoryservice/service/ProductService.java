@@ -13,4 +13,12 @@ public interface ProductService {
     ProductResponse getProduct(UUID id);
 
     List<ProductResponse> listProducts();
+
+    /**
+     * Chequeo RÁPIDO y no autoritativo: no reserva nada, solo mira el
+     * contador actual. Usado por el pre-chequeo síncrono de order-service
+     * (Paso 6) antes de arrancar el SAGA — la validación real sigue siendo
+     * reserveStock() en StockReservationService.
+     */
+    boolean checkAvailability(String sku, int quantity);
 }

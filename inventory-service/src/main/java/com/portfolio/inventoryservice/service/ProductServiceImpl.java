@@ -47,4 +47,12 @@ public class ProductServiceImpl implements ProductService {
     // Esos son justamente los pasos del SAGA que vamos a agregar en el Paso 2,
     // cuando inventory-service empiece a reaccionar a eventos de Kafka en vez
     // de solo servir un CRUD.
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean checkAvailability(String sku, int quantity) {
+        return productRepository.findBySku(sku)
+                .map(product -> product.getQuantityAvailable() >= quantity)
+                .orElse(false); // si el producto ni siquiera existe, "no disponible"
+    }
 }
