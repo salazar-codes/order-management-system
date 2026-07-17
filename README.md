@@ -1,68 +1,138 @@
-# Order Management System — Portafolio Java/Spring
+# Order Management System
 
-Sistema de gestión de pedidos con microservicios, construido incrementalmente
-como pieza de portafolio. Este README se irá actualizando en cada fase.
+Sistema de gestión de pedidos basado en microservicios, diseñado como pieza
+de portafolio para demostrar patrones de arquitectura distribuida de uso
+común en sistemas Java/Spring de nivel productivo: SAGA, mensajería
+asíncrona con entrega confiable vía Outbox, CQRS, tolerancia a fallos y
+programación reactiva.
 
-## Estado actual: Paso 1 de 13
+## Arquitectura
 
-✅ `order-service`, `inventory-service` y `payment-service` como CRUDs
-independientes, cada uno con su propia base de datos PostgreSQL.
-Sin distribución todavía: sin Kafka, sin SAGA, sin Gateway.
+```mermaid
+flowchart TB
+    FE[Frontend]
+    GW[API Gateway]
+    FE --> GW
 
-Próximos pasos: SAGA por orquestación (Paso 2) → Kafka (Paso 3) → Outbox
-(Paso 4) → CQRS con `order-query-service` en WebFlux (Paso 5) → Resilience4j
-(Paso 6) → reglas de validación funcionales (Paso 7) → tests con
-Testcontainers (Paso 8) → OpenAPI (Paso 9) → Postman/Newman (Paso 10) →
-API Gateway (Paso 11) → docker-compose completo (Paso 12) → frontend (Paso 13).
+    subgraph Escritura["Lado de escritura — Spring MVC"]
+        OS[order-service<br/>orquestador del SAGA]
+        IS[inventory-service]
+        PS[payment-service]
+    end
 
-## Cómo correr esto hoy
+    subgraph Lectura["Lado de lectura — WebFlux + R2DBC"]
+        OQS[order-query-service]
+    end
 
-1. Levanta las 3 bases de datos:
-   ```
+    GW --> OS
+    GW --> OQS
+
+    ODB[(order_db)]
+    IDB[(inventory_db)]
+    PDB[(payment_db)]
+    QDB[(query_db)]
+
+    OS --- ODB
+    IS --- IDB
+    PS --- PDB
+    OQS --- QDB
+
+    K[/Kafka/]
+    OS -->|outbox pattern| K
+    IS --> K
+    PS --> K
+    K --> OQS
+    K --> OS
+
+    OS -.HTTP síncrono + circuit breaker.-> IS
+```
+
+`order-service` orquesta el flujo de un pedido (reservar stock → cobrar →
+confirmar o compensar) coordinando `inventory-service` y `payment-service`
+de forma asíncrona vía Kafka. `order-query-service` mantiene un modelo de
+lectura desnormalizado, actualizado por los mismos eventos, para servir
+consultas sin acoplarse al modelo transaccional de escritura.
+
+## Stack
+
+| Categoría | Tecnología |
+|---|---|
+| Lenguaje / runtime | Java 21 |
+| Framework | Spring Boot 3.3 |
+| Persistencia (escritura) | Spring Data JPA + PostgreSQL (database-per-service) |
+| Persistencia (lectura) | Spring Data R2DBC + PostgreSQL |
+| Mensajería | Apache Kafka (modo KRaft) |
+| Resiliencia | Resilience4j (circuit breaker + retry) |
+| Reactivo | Spring WebFlux |
+| Infraestructura local | Docker Compose |
+
+## Patrones implementados
+
+- **Database per service** — cada servicio es dueño exclusivo de su esquema; no hay acceso cruzado a datos de otro servicio.
+- **SAGA por orquestación** — `order-service` coordina el flujo distribuido y ejecuta compensaciones explícitas ante fallos parciales.
+- **Mensajería asíncrona vía Kafka** — desacopla temporalmente a los servicios; comandos y eventos de respuesta viajan por topics dedicados.
+- **Transactional Outbox** — garantiza que la escritura en base de datos y la publicación del evento sean atómicas, eliminando el problema de doble escritura.
+- **CQRS** — modelo de lectura separado (`order-query-service`), sincronizado por eventos, con consistencia eventual.
+- **Circuit Breaker + Retry** — protege la única llamada síncrona entre servicios (pre-chequeo de disponibilidad de stock) ante fallos en cascada.
+
+## Estructura del repositorio
+
+```
+order-management-system/
+├── order-service/          # orquestador del SAGA, API de pedidos
+├── inventory-service/      # catálogo y reservas de stock
+├── payment-service/        # procesamiento de cobros
+├── order-query-service/    # modelo de lectura (CQRS), WebFlux + R2DBC
+├── docker-compose.dev.yml  # Postgres (x4) + Kafka + Kafka UI para desarrollo local
+└── postman/                # colección de pruebas end-to-end (WIP)
+```
+
+## Cómo correr el proyecto localmente
+
+**Requisitos:** Java 21, Maven, Docker Desktop.
+
+1. Levantar la infraestructura (bases de datos + Kafka):
+   ```bash
    docker-compose -f docker-compose.dev.yml up -d
    ```
-2. En 3 terminales distintas, levanta cada servicio (necesitas Java 21 y Maven):
-   ```
-   cd order-service     && ./mvnw spring-boot:run   # puerto 8081
-   cd inventory-service  && ./mvnw spring-boot:run   # puerto 8082
-   cd payment-service    && ./mvnw spring-boot:run   # puerto 8083
-   ```
-3. Prueba cada uno, por ejemplo:
-   ```
+2. Levantar cada servicio (desde IntelliJ o con `mvn spring-boot:run` en cada carpeta):
+
+   | Servicio | Puerto |
+      |---|---|
+   | `order-service` | 8081 |
+   | `inventory-service` | 8082 |
+   | `payment-service` | 8083 |
+   | `order-query-service` | 8084 |
+   | Kafka UI | 8090 |
+
+3. Crear un producto y un pedido de prueba:
+   ```bash
+   curl -X POST http://localhost:8082/api/products \
+     -H "Content-Type: application/json" \
+     -d '{"sku":"SKU-1","name":"Teclado mecanico","initialStock":50}'
+
    curl -X POST http://localhost:8081/api/orders \
      -H "Content-Type: application/json" \
      -d '{"customerId":"cust-1","items":[{"productSku":"SKU-1","quantity":2,"unitPrice":19.90}]}'
-
-   curl -X POST http://localhost:8082/api/products \
-     -H "Content-Type: application/json" \
-     -d '{"sku":"SKU-1","name":"Teclado mecánico","initialStock":50}'
-
-   curl -X POST http://localhost:8083/api/payments \
-     -H "Content-Type: application/json" \
-     -d '{"orderId":"<uuid-de-un-pedido>","amount":39.80}'
+   ```
+4. Consultar el resultado del SAGA (escritura o lectura):
+   ```bash
+   curl http://localhost:8081/api/orders/{id}
+   curl http://localhost:8084/api/order-views/{id}
    ```
 
-Nota: el wrapper `mvnw` no viene incluido en este esqueleto — genera cada
-wrapper localmente con `mvn -N wrapper:wrapper` dentro de cada carpeta de
-servicio, o usa tu `mvn` global.
+## Estado del proyecto
 
-## Por qué cada servicio tiene su propia base de datos
-
-Es el principio de "database per service": ningún servicio puede leer ni
-escribir directamente en la tabla de otro. Es lo que hace *necesarios* los
-patrones que vienen después (SAGA, eventos, CQRS) — no son complejidad
-gratuita, son la consecuencia de no compartir base de datos.
-
-## Resumen de lo aprendido en el Paso 1
-
-- **Entidades JPA vs. DTOs record**: las entidades necesitan mutabilidad y
-  constructor vacío para que Hibernate las gestione; los DTOs, al cruzar la
-  frontera HTTP, sí pueden (y deben) ser inmutables → records.
-- **Controller sin lógica de negocio**: el controller solo válida el shape
-  del request (`@Valid`) y traduce a/desde DTOs. Toda decisión vive en el
-  `service`.
-- **Constructor injection**: hace que cada `*ServiceImpl` sea instanciable en
-  un test unitario sin levantar Spring — clave cuando lleguemos al
-  Paso 8 con JUnit + Mockito.
-- **GlobalExceptionHandler por servicio**: evita repetir manejo de errores
-  en cada controller y centraliza el formato de respuesta de error.
+- [x] Servicios base (CRUD, database per service)
+- [x] SAGA por orquestación con compensación
+- [x] Mensajería asíncrona con Kafka
+- [x] Transactional Outbox
+- [x] CQRS con modelo de lectura reactivo
+- [x] Circuit breaker (Resilience4j)
+- [ ] Motor de reglas de validación funcional
+- [ ] Testing (JUnit, Mockito, Testcontainers)
+- [ ] Documentación OpenAPI/Swagger
+- [ ] Colección Postman + Newman en CI
+- [ ] API Gateway
+- [ ] Despliegue local completo vía Docker Compose
+- [ ] Frontend
