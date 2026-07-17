@@ -1136,7 +1136,7 @@
                   }
                 },
                 "url": {
-                  "raw": "http://localhost:8081/api/orders/58881a67-c971-47e8-8897-10d9fc6851e7",
+                  "raw": "http://localhost:8081/api/orders/66009eea-cfab-41ee-8bb6-76e16885fa8c",
                   "protocol": "http",
                   "host": [
                     "localhost"
@@ -1145,7 +1145,7 @@
                   "path": [
                     "api",
                     "orders",
-                    "58881a67-c971-47e8-8897-10d9fc6851e7"
+                    "66009eea-cfab-41ee-8bb6-76e16885fa8c"
                   ]
                 }
               },
@@ -1304,6 +1304,397 @@
                   ],
                   "cookie": [],
                   "body": "{\n    \"id\": \"d9793263-a623-4a4d-b6d2-4543d396c43c\",\n    \"customerId\": \"cust-3\",\n    \"status\": \"CANCELLED\",\n    \"totalAmount\": 1500,\n    \"createdAt\": \"2026-07-15T19:53:06.758535Z\",\n    \"items\": [\n        {\n            \"productSku\": \"SKU-1\",\n            \"quantity\": 10,\n            \"unitPrice\": 150\n        }\n    ]\n}"
+                }
+              ]
+            },
+            {
+              "name": "consultar por id Query",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8084/api/order-views/09afc924-b048-4c7b-8d27-5e6165106f47",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8084",
+                  "path": [
+                    "api",
+                    "order-views",
+                    "09afc924-b048-4c7b-8d27-5e6165106f47"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "actuator health",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8081/actuator/health",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "actuator",
+                    "health"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "actuator",
+          "item": [
+            {
+              "name": "actuator health circuitbreakers",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8081/actuator/circuitbreakers",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "actuator",
+                    "circuitbreakers"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "actuator health circuitbreakers half_open",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "http://localhost:8081/actuator/circuitbreakers",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8081",
+                      "path": [
+                        "actuator",
+                        "circuitbreakers"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/vnd.spring-boot.actuator.v3+json"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Thu, 16 Jul 2026 23:59:32 GMT"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=60"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"circuitBreakers\": {\n        \"inventoryAvailability\": {\n            \"failureRate\": \"-1.0%\",\n            \"slowCallRate\": \"-1.0%\",\n            \"failureRateThreshold\": \"50.0%\",\n            \"slowCallRateThreshold\": \"100.0%\",\n            \"bufferedCalls\": 0,\n            \"failedCalls\": 0,\n            \"slowCalls\": 0,\n            \"slowFailedCalls\": 0,\n            \"notPermittedCalls\": 0,\n            \"state\": \"HALF_OPEN\"\n        }\n    }\n}"
+                },
+                {
+                  "name": "actuator health circuitbreakers CLOSED",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "http://localhost:8081/actuator/circuitbreakers",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8081",
+                      "path": [
+                        "actuator",
+                        "circuitbreakers"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/vnd.spring-boot.actuator.v3+json"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Fri, 17 Jul 2026 00:13:53 GMT"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=60"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"circuitBreakers\": {\n        \"inventoryAvailability\": {\n            \"failureRate\": \"-1.0%\",\n            \"slowCallRate\": \"-1.0%\",\n            \"failureRateThreshold\": \"50.0%\",\n            \"slowCallRateThreshold\": \"100.0%\",\n            \"bufferedCalls\": 0,\n            \"failedCalls\": 0,\n            \"slowCalls\": 0,\n            \"slowFailedCalls\": 0,\n            \"notPermittedCalls\": 0,\n            \"state\": \"CLOSED\"\n        }\n    }\n}"
+                },
+                {
+                  "name": "actuator health circuitbreakers OPEN",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "http://localhost:8081/actuator/circuitbreakers",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8081",
+                      "path": [
+                        "actuator",
+                        "circuitbreakers"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/vnd.spring-boot.actuator.v3+json"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Fri, 17 Jul 2026 00:15:09 GMT"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=60"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"circuitBreakers\": {\n        \"inventoryAvailability\": {\n            \"failureRate\": \"100.0%\",\n            \"slowCallRate\": \"0.0%\",\n            \"failureRateThreshold\": \"50.0%\",\n            \"slowCallRateThreshold\": \"100.0%\",\n            \"bufferedCalls\": 5,\n            \"failedCalls\": 5,\n            \"slowCalls\": 0,\n            \"slowFailedCalls\": 0,\n            \"notPermittedCalls\": 1,\n            \"state\": \"OPEN\"\n        }\n    }\n}"
+                }
+              ]
+            },
+            {
+              "name": "actuator health circuitbreakerevents",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8081/actuator/circuitbreakerevents",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "actuator",
+                    "circuitbreakerevents"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "actuator health circuitbreakerevents",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "http://localhost:8081/actuator/circuitbreakerevents",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8081",
+                      "path": [
+                        "actuator",
+                        "circuitbreakerevents"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/vnd.spring-boot.actuator.v3+json"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Fri, 17 Jul 2026 00:08:31 GMT"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=60"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"circuitBreakerEvents\": [\n        {\n            \"circuitBreakerName\": \"inventoryAvailability\",\n            \"type\": \"ERROR\",\n            \"creationTime\": \"2026-07-16T18:58:52.160138-05:00[America/Lima]\",\n            \"errorMessage\": \"org.springframework.web.client.ResourceAccessException: I/O error on GET request for \\\"http://localhost:8082/api/products/availability\\\": null\",\n            \"durationInMs\": 14,\n            \"stateTransition\": null\n        },\n        {\n            \"circuitBreakerName\": \"inventoryAvailability\",\n            \"type\": \"ERROR\",\n            \"creationTime\": \"2026-07-16T18:58:52.173469-05:00[America/Lima]\",\n            \"errorMessage\": \"org.springframework.web.client.ResourceAccessException: I/O error on GET request for \\\"http://localhost:8082/api/products/availability\\\": null\",\n            \"durationInMs\": 0,\n            \"stateTransition\": null\n        },\n        {\n            \"circuitBreakerName\": \"inventoryAvailability\",\n            \"type\": \"ERROR\",\n            \"creationTime\": \"2026-07-16T18:58:52.184553-05:00[America/Lima]\",\n            \"errorMessage\": \"org.springframework.web.client.ResourceAccessException: I/O error on GET request for \\\"http://localhost:8082/api/products/availability\\\": null\",\n            \"durationInMs\": 0,\n            \"stateTransition\": null\n        },\n        {\n            \"circuitBreakerName\": \"inventoryAvailability\",\n            \"type\": \"ERROR\",\n            \"creationTime\": \"2026-07-16T18:58:52.193462-05:00[America/Lima]\",\n            \"errorMessage\": \"org.springframework.web.client.ResourceAccessException: I/O error on GET request for \\\"http://localhost:8082/api/products/availability\\\": null\",\n            \"durationInMs\": 0,\n            \"stateTransition\": null\n        },\n        {\n            \"circuitBreakerName\": \"inventoryAvailability\",\n            \"type\": \"ERROR\",\n            \"creationTime\": \"2026-07-16T18:58:52.201791-05:00[America/Lima]\",\n            \"errorMessage\": \"org.springframework.web.client.ResourceAccessException: I/O error on GET request for \\\"http://localhost:8082/api/products/availability\\\": null\",\n            \"durationInMs\": 0,\n            \"stateTransition\": null\n        },\n        {\n            \"circuitBreakerName\": \"inventoryAvailability\",\n            \"type\": \"FAILURE_RATE_EXCEEDED\",\n            \"creationTime\": \"2026-07-16T18:58:52.201970-05:00[America/Lima]\",\n            \"errorMessage\": null,\n            \"durationInMs\": null,\n            \"stateTransition\": null\n        },\n        {\n            \"circuitBreakerName\": \"inventoryAvailability\",\n            \"type\": \"STATE_TRANSITION\",\n            \"creationTime\": \"2026-07-16T18:58:52.203212-05:00[America/Lima]\",\n            \"errorMessage\": null,\n            \"durationInMs\": null,\n            \"stateTransition\": \"CLOSED_TO_OPEN\"\n        },\n        {\n            \"circuitBreakerName\": \"inventoryAvailability\",\n            \"type\": \"NOT_PERMITTED\",\n            \"creationTime\": \"2026-07-16T18:58:52.210995-05:00[America/Lima]\",\n            \"errorMessage\": null,\n            \"durationInMs\": null,\n            \"stateTransition\": null\n        },\n        {\n            \"circuitBreakerName\": \"inventoryAvailability\",\n            \"type\": \"NOT_PERMITTED\",\n            \"creationTime\": \"2026-07-16T18:58:52.218271-05:00[America/Lima]\",\n            \"errorMessage\": null,\n            \"durationInMs\": null,\n            \"stateTransition\": null\n        },\n        {\n            \"circuitBreakerName\": \"inventoryAvailability\",\n            \"type\": \"STATE_TRANSITION\",\n            \"creationTime\": \"2026-07-16T18:59:02.211305-05:00[America/Lima]\",\n            \"errorMessage\": null,\n            \"durationInMs\": null,\n            \"stateTransition\": \"OPEN_TO_HALF_OPEN\"\n        }\n    ]\n}"
+                },
+                {
+                  "name": "actuator health circuitbreakerevents success",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "http://localhost:8081/actuator/circuitbreakerevents",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8081",
+                      "path": [
+                        "actuator",
+                        "circuitbreakerevents"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/vnd.spring-boot.actuator.v3+json"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Fri, 17 Jul 2026 00:13:23 GMT"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=60"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    }
+                  ],
+                  "cookie": [
+                    {
+                      "expires": "Invalid Date",
+                      "domain": "",
+                      "path": ""
+                    }
+                  ],
+                  "body": "{\n    \"circuitBreakerEvents\": [\n        {\n            \"circuitBreakerName\": \"inventoryAvailability\",\n            \"type\": \"ERROR\",\n            \"creationTime\": \"2026-07-16T18:58:52.160138-05:00[America/Lima]\",\n            \"errorMessage\": \"org.springframework.web.client.ResourceAccessException: I/O error on GET request for \\\"http://localhost:8082/api/products/availability\\\": null\",\n            \"durationInMs\": 14,\n            \"stateTransition\": null\n        },\n        {\n            \"circuitBreakerName\": \"inventoryAvailability\",\n            \"type\": \"ERROR\",\n            \"creationTime\": \"2026-07-16T18:58:52.173469-05:00[America/Lima]\",\n            \"errorMessage\": \"org.springframework.web.client.ResourceAccessException: I/O error on GET request for \\\"http://localhost:8082/api/products/availability\\\": null\",\n            \"durationInMs\": 0,\n            \"stateTransition\": null\n        },\n        {\n            \"circuitBreakerName\": \"inventoryAvailability\",\n            \"type\": \"ERROR\",\n            \"creationTime\": \"2026-07-16T18:58:52.184553-05:00[America/Lima]\",\n            \"errorMessage\": \"org.springframework.web.client.ResourceAccessException: I/O error on GET request for \\\"http://localhost:8082/api/products/availability\\\": null\",\n            \"durationInMs\": 0,\n            \"stateTransition\": null\n        },\n        {\n            \"circuitBreakerName\": \"inventoryAvailability\",\n            \"type\": \"ERROR\",\n            \"creationTime\": \"2026-07-16T18:58:52.193462-05:00[America/Lima]\",\n            \"errorMessage\": \"org.springframework.web.client.ResourceAccessException: I/O error on GET request for \\\"http://localhost:8082/api/products/availability\\\": null\",\n            \"durationInMs\": 0,\n            \"stateTransition\": null\n        },\n        {\n            \"circuitBreakerName\": \"inventoryAvailability\",\n            \"type\": \"ERROR\",\n            \"creationTime\": \"2026-07-16T18:58:52.201791-05:00[America/Lima]\",\n            \"errorMessage\": \"org.springframework.web.client.ResourceAccessException: I/O error on GET request for \\\"http://localhost:8082/api/products/availability\\\": null\",\n            \"durationInMs\": 0,\n            \"stateTransition\": null\n        },\n        {\n            \"circuitBreakerName\": \"inventoryAvailability\",\n            \"type\": \"FAILURE_RATE_EXCEEDED\",\n            \"creationTime\": \"2026-07-16T18:58:52.201970-05:00[America/Lima]\",\n            \"errorMessage\": null,\n            \"durationInMs\": null,\n            \"stateTransition\": null\n        },\n        {\n            \"circuitBreakerName\": \"inventoryAvailability\",\n            \"type\": \"STATE_TRANSITION\",\n            \"creationTime\": \"2026-07-16T18:58:52.203212-05:00[America/Lima]\",\n            \"errorMessage\": null,\n            \"durationInMs\": null,\n            \"stateTransition\": \"CLOSED_TO_OPEN\"\n        },\n        {\n            \"circuitBreakerName\": \"inventoryAvailability\",\n            \"type\": \"NOT_PERMITTED\",\n            \"creationTime\": \"2026-07-16T18:58:52.210995-05:00[America/Lima]\",\n            \"errorMessage\": null,\n            \"durationInMs\": null,\n            \"stateTransition\": null\n        },\n        {\n            \"circuitBreakerName\": \"inventoryAvailability\",\n            \"type\": \"NOT_PERMITTED\",\n            \"creationTime\": \"2026-07-16T18:58:52.218271-05:00[America/Lima]\",\n            \"errorMessage\": null,\n            \"durationInMs\": null,\n            \"stateTransition\": null\n        },\n        {\n            \"circuitBreakerName\": \"inventoryAvailability\",\n            \"type\": \"STATE_TRANSITION\",\n            \"creationTime\": \"2026-07-16T18:59:02.211305-05:00[America/Lima]\",\n            \"errorMessage\": null,\n            \"durationInMs\": null,\n            \"stateTransition\": \"OPEN_TO_HALF_OPEN\"\n        },\n        {\n            \"circuitBreakerName\": \"inventoryAvailability\",\n            \"type\": \"SUCCESS\",\n            \"creationTime\": \"2026-07-16T19:13:12.731054-05:00[America/Lima]\",\n            \"errorMessage\": null,\n            \"durationInMs\": 87,\n            \"stateTransition\": null\n        },\n        {\n            \"circuitBreakerName\": \"inventoryAvailability\",\n            \"type\": \"SUCCESS\",\n            \"creationTime\": \"2026-07-16T19:13:12.917604-05:00[America/Lima]\",\n            \"errorMessage\": null,\n            \"durationInMs\": 10,\n            \"stateTransition\": null\n        },\n        {\n            \"circuitBreakerName\": \"inventoryAvailability\",\n            \"type\": \"SUCCESS\",\n            \"creationTime\": \"2026-07-16T19:13:13.410072-05:00[America/Lima]\",\n            \"errorMessage\": null,\n            \"durationInMs\": 9,\n            \"stateTransition\": null\n        },\n        {\n            \"circuitBreakerName\": \"inventoryAvailability\",\n            \"type\": \"STATE_TRANSITION\",\n            \"creationTime\": \"2026-07-16T19:13:13.411294-05:00[America/Lima]\",\n            \"errorMessage\": null,\n            \"durationInMs\": null,\n            \"stateTransition\": \"HALF_OPEN_TO_CLOSED\"\n        }\n    ]\n}"
+                }
+              ]
+            },
+            {
+              "name": "actuator health",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8081/actuator/health",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081",
+                  "path": [
+                    "actuator",
+                    "health"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "actuator health",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "http://localhost:8081/actuator/health",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "8081",
+                      "path": [
+                        "actuator",
+                        "health"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/vnd.spring-boot.actuator.v3+json"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Fri, 17 Jul 2026 00:08:00 GMT"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=60"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"status\": \"UP\",\n    \"components\": {\n        \"circuitBreakers\": {\n            \"status\": \"UNKNOWN\"\n        },\n        \"db\": {\n            \"status\": \"UP\",\n            \"details\": {\n                \"database\": \"PostgreSQL\",\n                \"validationQuery\": \"isValid()\"\n            }\n        },\n        \"diskSpace\": {\n            \"status\": \"UP\",\n            \"details\": {\n                \"total\": 994610155520,\n                \"free\": 790675709952,\n                \"threshold\": 10485760,\n                \"path\": \"/Users/jimmysalazar/proyectos/order-management-system/.\",\n                \"exists\": true\n            }\n        },\n        \"ping\": {\n            \"status\": \"UP\"\n        }\n    }\n}"
                 }
               ]
             }
